@@ -46,4 +46,17 @@ async def on_member_unban(guild, user):
     await channel.send("[User " + str(user) + " unbanned from " + str(guild) +
                        " at " + current_time + "]")
 
+@client.event
+async def on_member_update(before, after):
+    """channel: logs"""
+    channel = client.get_channel(1249871058152980530)
+    await channel.send("[New update on " + str(before) + " now " + str(
+        after) + "]")
+
+@client.event
+async def on_message_delete(message):
+    """channel: logs"""
+    channel = client.get_channel(1249871058152980530)
+    await channel.send("[User " + str(message.author) + " deleted a message on " + str(message.channel) + "]")
+
 client.run("MTI0OTg1MTcwNDA1NzUzMjQ5OA.Ge2BU4.g2JH2kvturV8667JnKXsBWKyZZzhjieEXmgrms")
