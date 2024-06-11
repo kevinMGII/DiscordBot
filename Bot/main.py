@@ -1,10 +1,7 @@
 import discord, datetime
 from discord.ext import commands
 
-intents = discord.Intents.default()
-intents.members = True
-
-client = commands.Bot(command_prefix = ".", intents = intents)
+client = commands.Bot(command_prefix = ".", intents = discord.Intents.all())
 
 @client.event
 async def on_ready():
@@ -57,6 +54,6 @@ async def on_member_update(before, after):
 async def on_message_delete(message):
     """channel: logs"""
     channel = client.get_channel(1249871058152980530)
-    await channel.send("[User " + str(message.author) + " deleted a message on " + str(message.channel) + "]")
+    await channel.send("[Message from " + str(message.author) + " deleted on " + str(message.channel) + "]")
 
 client.run("MTI0OTg1MTcwNDA1NzUzMjQ5OA.Ge2BU4.g2JH2kvturV8667JnKXsBWKyZZzhjieEXmgrms")
