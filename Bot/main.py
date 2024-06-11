@@ -1,4 +1,4 @@
-import discord
+import discord, datetime
 from discord.ext import commands
 
 intents = discord.Intents.default()
@@ -20,22 +20,30 @@ async def bye(ctx):
 
 @client.event
 async def on_member_join(member):
+    """channel: bienvenida"""
     channel = client.get_channel(1249870241140441182)
-    await channel.send("[Hi " + member + " ]")
+    await channel.send("[Hi " + str(member) + "]")
 
 @client.event
 async def on_member_remove(member):
+    """channel: bienvenida"""
     channel = client.get_channel(1249870241140441182)
-    await channel.send("[Bye " + member + " ]")
+    await channel.send("[Bye " + str(member) + "]")
 
 @client.event
 async def on_member_ban(guild, user):
+    """channel: logs"""
     channel = client.get_channel(1249871058152980530)
-    await channel.send("[User " + user + " banned from " + guild + " ]")
+    current_time = datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+    await channel.send("[User " + str(user) + " banned from " + str(guild) +
+                       " at " + current_time + "]")
 
 @client.event
 async def on_member_unban(guild, user):
+    """channel: logs"""
     channel = client.get_channel(1249871058152980530)
-    await channel.send("[User " + user + " banned from " + guild + " ]")
+    current_time = datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+    await channel.send("[User " + str(user) + " unbanned from " + str(guild) +
+                       " at " + current_time + "]")
 
 client.run("MTI0OTg1MTcwNDA1NzUzMjQ5OA.Ge2BU4.g2JH2kvturV8667JnKXsBWKyZZzhjieEXmgrms")
