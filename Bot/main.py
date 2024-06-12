@@ -56,4 +56,19 @@ async def on_message_delete(message):
     channel = client.get_channel(1249871058152980530)
     await channel.send("[Message from " + str(message.author) + " deleted on " + str(message.channel) + "]")
 
+@client.command()
+async def create_text_channel(ctx, nombre: str):
+    """channel: logs"""
+    channel = client.get_channel(1249871058152980530)
+    canal = await ctx.guild.create_text_channel(name=nombre)
+    await channel.send("[Canal " + canal.mention + " creado]")
+
+@client.command()
+async def delete_text_channel(ctx, canal: discord.TextChannel, *, razon=None):
+    channel = client.get_channel(1249871058152980530)
+    await canal.delete(reason=razon)
+    await channel.send("[Canal " + canal.name + " eliminado debido a " +
+                       razon + "]")
+
+
 client.run("MTI0OTg1MTcwNDA1NzUzMjQ5OA.Ge2BU4.g2JH2kvturV8667JnKXsBWKyZZzhjieEXmgrms")
