@@ -87,14 +87,15 @@ async def on_message(message):
     if message.author == client.user:
         return
 
+    ctx = await client.get_context(message)
+    if ctx.valid:
+        await client.process_commands(message)
+        return
+
     if message.channel.id == 1250909488756555930:
         async with message.channel.typing():
             response = await ask_openrouter(message.content)
             await message.channel.send(response)
-        return
-
-    await client.process_commands(message)
-
 
 @client.command()
 async def help(ctx):
