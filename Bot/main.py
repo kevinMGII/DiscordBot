@@ -72,6 +72,16 @@ async def delete_text_channel(ctx, canal: discord.TextChannel, *, razon=None):
     await channel.send("[Canal " + canal.name + " eliminado debido a " +
                        razon + "]")
 
+@client.command()
+@commands.has_permissions(manage_messages=True)
+async def purge(ctx, amount: int):
+    """Borra una cantidad de mensajes en el canal actual"""
+    deleted = await ctx.channel.purge(limit=amount)
+    confirm = await ctx.send(f"[{len(deleted)} mensajes eliminados]", delete_after=3)
+
+    log_channel = client.get_channel(1249871058152980530)
+    await log_channel.send(f"[{ctx.author} purgó {len(deleted)} mensajes en {ctx.channel.mention}]")
+
 @client.event
 async def on_message(message):
     if message.author == client.user:
