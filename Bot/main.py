@@ -3,7 +3,7 @@ from discord.ext import commands
 from dotenv import load_dotenv
 from chatbot import ask_openrouter
 
-client = commands.Bot(command_prefix = ".", intents = discord.Intents.all())
+client = commands.Bot(command_prefix=".", help_command=None, intents=discord.Intents.all())
 
 @client.event
 async def on_ready():
@@ -94,6 +94,34 @@ async def on_message(message):
         return
 
     await client.process_commands(message)
+
+
+@client.command()
+async def help(ctx):
+    embed = discord.Embed(
+        title="📁 Lista de comandos disponibles",
+        description="Aquí tienes un resumen rápido de lo que puedes usar:",
+        color=int("33ffff", 16)
+    )
+
+    embed.add_field(name=".hello", value="Saludo breve del bot", inline=False)
+    embed.add_field(name=".bye", value="Despedida breve del bot", inline=False)
+    embed.add_field(name=".purge <n>",
+                    value="Borra los últimos n mensajes del canal",
+                    inline=False)
+    embed.add_field(name=".create_text_channel <nombre>",
+                    value="Crea un canal de texto con el nombre dado",
+                    inline=False)
+    embed.add_field(name=".delete_text_channel <#canal> <razón>",
+                    value="Elimina un canal específico con una razón",
+                    inline=False)
+    embed.add_field(name=".help", value="Muestra esta lista de comandos",
+                    inline=False)
+
+    embed.set_footer(
+        text="Los eventos como joins, bans o mensajes eliminados se registran automáticamente.")
+
+    await ctx.send(embed=embed)
 
 
 load_dotenv()
