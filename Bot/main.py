@@ -98,6 +98,32 @@ async def on_message(message):
             await message.channel.send(response)
 
 @client.command()
+async def connect(ctx):
+    voice_channel = client.get_channel(1249858208793755723)
+    if voice_channel is None:
+        await ctx.send("No pude encontrar el canal de voz.")
+        return
+
+    if ctx.voice_client is not None:
+        await ctx.voice_client.disconnect()
+
+    try:
+        await voice_channel.connect()
+        await ctx.send(f"Conectado al canal de voz: {voice_channel.name}")
+    except Exception as e:
+        await ctx.send(f"No pude conectarme al canal de voz: {e}")
+
+@client.command()
+async def disconnect(ctx):
+    voice_client = ctx.voice_client
+    if voice_client is None:
+        await ctx.send("No estoy conectado a ningún canal de voz.")
+        return
+
+    await voice_client.disconnect()
+    await ctx.send("Me he desconectado del canal de voz.")
+
+@client.command()
 async def help(ctx):
     embed = discord.Embed(
         title="📁 Lista de comandos disponibles",
@@ -107,6 +133,11 @@ async def help(ctx):
 
     embed.add_field(name=".hello", value="Saludo breve del bot", inline=False)
     embed.add_field(name=".bye", value="Despedida breve del bot", inline=False)
+    embed.add_field(name=".connect", value="Unir bot al canal de voz",
+                    inline=False)
+    embed.add_field(name=".disconnect",
+                    value="Desconectar bot del canal de voz",
+                    inline=False)
     embed.add_field(name=".purge <n>",
                     value="Borra los últimos n mensajes del canal",
                     inline=False)
