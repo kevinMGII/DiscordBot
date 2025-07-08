@@ -22,6 +22,10 @@ async def ask_openrouter(prompt: str) -> str:
                     "Después de eso, hablas de manera natural, clara y útil, en español. "
                     "Evita repetir que eres un asistente o usar saludos innecesarios. "
                     "Tu objetivo es responder como una persona normal, sin ser robótico ni formal. "
+                    "Prohibido usar emojis, no puedes utilizar emojis."
+                    "Utilizarás respuestas muy cortas, en cualquier caso. "
+                    "Cada respuesta estará limitada a un máximo de 100 "
+                    "caracteres."
                 )
             },
             {
