@@ -1,5 +1,6 @@
-import discord, datetime
+import discord, datetime, os
 from discord.ext import commands
+from dotenv import load_dotenv
 
 client = commands.Bot(command_prefix = ".", intents = discord.Intents.all())
 
@@ -70,5 +71,5 @@ async def delete_text_channel(ctx, canal: discord.TextChannel, *, razon=None):
     await channel.send("[Canal " + canal.name + " eliminado debido a " +
                        razon + "]")
 
-
-client.run("MTI0OTg1MTcwNDA1NzUzMjQ5OA.Ge2BU4.g2JH2kvturV8667JnKXsBWKyZZzhjieEXmgrms")
+load_dotenv()
+client.run(os.getenv("DISCORD_TOKEN"))
