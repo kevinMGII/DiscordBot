@@ -1,6 +1,7 @@
 import discord, datetime, os
 from discord.ext import commands
 from dotenv import load_dotenv
+from chatbot import ask_openrouter
 
 client = commands.Bot(command_prefix = ".", intents = discord.Intents.all())
 
@@ -70,6 +71,20 @@ async def delete_text_channel(ctx, canal: discord.TextChannel, *, razon=None):
     await canal.delete(reason=razon)
     await channel.send("[Canal " + canal.name + " eliminado debido a " +
                        razon + "]")
+
+@client.event
+async def on_message(message):
+    if message.author == client.user:
+        return
+
+    if message.channel.id == 1250909488756555930:
+        async with message.channel.typing():
+            response = await ask_openrouter(message.content)
+            await message.channel.send(response)
+        return
+
+    await client.process_commands(message)
+
 
 load_dotenv()
 client.run(os.getenv("DISCORD_TOKEN"))
