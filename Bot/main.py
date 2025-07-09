@@ -1,4 +1,4 @@
-import discord, datetime, os
+import discord, datetime, os, asyncio
 from discord.ext import commands
 from dotenv import load_dotenv
 from chatbot import ask_openrouter
@@ -123,6 +123,29 @@ async def disconnect(ctx):
     await voice_client.disconnect()
     await ctx.send("Me he desconectado del canal de voz.")
 
+@client.command()
+async def remindme(ctx, *, args):
+    try:
+        parts = args.split()
+        seconds = int(parts[-1])
+        reminder = " ".join(parts[:-1])
+
+        if seconds <= 0:
+            await ctx.send("Por favor ingresa un tiempo válido mayor que 0.")
+            return
+        if reminder == "":
+            await ctx.send("Por favor ingresa un mensaje para el recordatorio.")
+            return
+
+        await ctx.send(f"Recordatorio programado en {seconds} segundos.")
+
+        await asyncio.sleep(seconds)
+
+        await ctx.send(f"[Recordatorio {ctx.author.mention}: {reminder}]")
+
+    except ValueError:
+        await ctx.send("Usa el comando así: `.remindme <mensaje> "
+                       "<segundos>`\nEjemplo: `.remindme Despierta 180`")
 @client.command()
 async def help(ctx):
     embed = discord.Embed(
