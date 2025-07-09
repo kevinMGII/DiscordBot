@@ -146,6 +146,34 @@ async def remindme(ctx, *, args):
     except ValueError:
         await ctx.send("Usa el comando así: `.remindme <mensaje> "
                        "<segundos>`\nEjemplo: `.remindme Despierta 180`")
+
+
+@client.command()
+async def show(ctx, member: discord.Member = None):
+    member = member or ctx.author
+
+    activity = None
+    for act in member.activities:
+        if isinstance(act, discord.Spotify):
+            activity = act
+            break
+        elif act.type == discord.ActivityType.listening:
+            activity = act
+            break
+
+    if activity:
+        if isinstance(activity, discord.Spotify):
+            artistas = ", ".join(activity.artists)
+            await ctx.send(f"Estás escuchando {activity.title} de {artistas}")
+        else:
+            desc = activity.details if hasattr(activity, 'details') else str(
+                activity)
+            await ctx.send(desc)
+    else:
+        await ctx.send(
+            f"{member.display_name}, no estás escuchando nada ahora mismo.")
+
+
 @client.command()
 async def help(ctx):
     embed = discord.Embed(
