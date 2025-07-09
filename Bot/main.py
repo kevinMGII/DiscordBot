@@ -187,7 +187,7 @@ async def mystats(ctx):
 
     embed = discord.Embed(
         title="📊 Estadísticas del Usuario",
-        color=discord.Color.teal()
+        color=int("58ff37", 16)
     )
     embed.add_field(name="Usuario", value=member.name, inline=False)
     embed.add_field(name="Apodo", value=member.display_name, inline=False)
@@ -222,6 +222,12 @@ async def help(ctx):
                     inline=False)
     embed.add_field(name=".delete_text_channel <#canal> <razón>",
                     value="Elimina un canal específico con una razón",
+                    inline=False)
+    embed.add_field(name=".remindme <mensaje> <segundos>",
+                    value="Establece un recordatorio",
+                    inline=False)
+    embed.add_field(name=".mystats",
+                    value="Muestra las estadísticas del usuario",
                     inline=False)
     embed.add_field(name=".help", value="Muestra esta lista de comandos",
                     inline=False)
