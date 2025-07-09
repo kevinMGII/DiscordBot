@@ -173,6 +173,31 @@ async def show(ctx, member: discord.Member = None):
         await ctx.send(
             f"{member.display_name}, no estás escuchando nada ahora mismo.")
 
+@client.command()
+async def mystats(ctx):
+    member = ctx.author
+    joined_at = member.joined_at
+
+    if joined_at is None:
+        await ctx.send("No pude obtener la fecha de unión.")
+        return
+
+    now = datetime.datetime.now(datetime.timezone.utc)
+    dias_en_servidor = (now - joined_at).days
+
+    embed = discord.Embed(
+        title="📊 Estadísticas del Usuario",
+        color=discord.Color.teal()
+    )
+    embed.add_field(name="Usuario", value=member.name, inline=False)
+    embed.add_field(name="Apodo", value=member.display_name, inline=False)
+    embed.add_field(name="Miembro desde", value=joined_at.strftime(
+        "%d/%m/%Y %H:%M:%S"), inline=False)
+    embed.add_field(name="Tiempo transcurrido",
+                    value=f"{dias_en_servidor} días", inline=False)
+
+    await ctx.send(embed=embed)
+
 
 @client.command()
 async def help(ctx):
