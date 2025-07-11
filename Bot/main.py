@@ -56,7 +56,24 @@ async def on_member_update(before, after):
 async def on_message_delete(message):
     """channel: logs"""
     channel = client.get_channel(1249871058152980530)
-    await channel.send("[Message from " + str(message.author) + " deleted on " + str(message.channel) + "]")
+    await channel.send("[Message from " + str(message.author) + " deleted on "
+                       + str(message.channel) + "]")
+
+@client.command()
+async def kick(ctx, member: discord.Member, *, reason=None):
+    log_channel = client.get_channel(1249871058152980530)
+    if reason is None:
+        reason = "Sin razón especificada."
+
+    try:
+        await member.kick(reason=reason)
+        await ctx.send(f"{member.mention} ha sido expulsado del servidor.")
+        await log_channel.send(f"[{ctx.author} ha expulsado a "
+                               f"{member} por {reason}]")
+    except Exception as e:
+        await ctx.send(f"[{member.name} no puede ser expulsado]")
+        await log_channel.send(
+            f"[No se pudo expulsar a {member.name}, {e}]")
 
 @client.command()
 async def create_text_channel(ctx, nombre: str):
