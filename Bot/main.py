@@ -76,6 +76,22 @@ async def kick(ctx, member: discord.Member, *, reason=None):
             f"[No se pudo expulsar a {member.name}, {e}]")
 
 @client.command()
+async def ban(ctx, member: discord.Member, *, reason=None):
+    log_channel = client.get_channel(1249871058152980530)
+    if reason is None:
+        reason = "Sin razón especificada."
+
+    try:
+        await member.ban(reason=reason)
+        await ctx.send(f"{member.mention} ha sido baneado del servidor.")
+        await log_channel.send(f"[{ctx.author} ha baneado a "
+                               f"{member} por {reason}]")
+    except Exception as e:
+        await ctx.send(f"[{member.name} no puede ser baneado]")
+        await log_channel.send(
+            f"[No se pudo expulsar a {member.name}, {e}]")
+
+@client.command()
 async def create_text_channel(ctx, nombre: str):
     """channel: logs"""
     channel = client.get_channel(1249871058152980530)
