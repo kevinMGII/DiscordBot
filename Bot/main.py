@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from chatbot import ask_openrouter
 
 client = commands.Bot(command_prefix=".", help_command=None, intents=discord.Intents.all())
+warnings_dict = {}
 
 @client.event
 async def on_ready():
@@ -121,6 +122,35 @@ async def mute(ctx, usuario: discord.Member, tiempo: int, *,
     except Exception as error:
         await ctx.send("No se pudo aplicar el mute.")
         await log_channel.send(f"[Error al mutear a {usuario}: {error}]")
+
+@client.command()
+async def warn(ctx, miembro: discord.Member, *,
+               razon: str = "Sin razón especificada."):
+    log_channel = client.get_channel(1249871058152980530)
+    user_id = str(miembro.id)
+
+    if user_id not in warnings_dict:
+        warnings_dict[user_id] = []
+    warnings_dict[user_id].append(razon)
+
+    total_warns = len(warnings_dict[user_id])
+    await ctx.send(f"{miembro.mention} ha recibido una advertencia, lleva "
+                   f"{total_warns}/3 acumuladas.")
+    await log_channel.send(f"[{ctx.author} ha advertido a {miembro} "
+                           f"por \"{razon}\". Total: {total_warns}/3]")
+
+    if total_warns >= 3:
+        try:
+            await miembro.ban(reason="Acumulación de warnings")
+            await ctx.send(f"{miembro.mention} ha sido baneado por acumulación "
+                           f"de advertencias.")
+            await log_channel.send(f"[{miembro} ha sido baneado "
+                                   f"automáticamente por acumulación de warnings]")
+            del warnings_dict[user_id]
+        except Exception as e:
+            await ctx.send(f"No se pudo banear a {miembro.mention}.")
+            await log_channel.send(f"[Error al banear a {miembro}: {e}]")
+
 
 @client.command()
 async def create_text_channel(ctx, nombre: str):
