@@ -92,6 +92,37 @@ async def ban(ctx, member: discord.Member, *, reason=None):
             f"[No se pudo expulsar a {member.name}, {e}]")
 
 @client.command()
+async def mute(ctx, usuario: discord.Member, tiempo: int, *,
+               razon: str = "Sin razón especificada."):
+    log_channel = client.get_channel(1249871058152980530)
+    servidor = ctx.guild
+    rol_muteado = discord.utils.get(servidor.roles, name="Mute")
+
+    if not rol_muteado:
+        await ctx.send("No se encontró el rol 'Mute'.")
+        return
+
+    if tiempo <= 0:
+        await ctx.send("El tiempo debe ser un número positivo en segundos.")
+        return
+
+    try:
+        await usuario.add_roles(rol_muteado, reason=razon)
+        await ctx.send(f"{usuario.mention} ha sido muteado por {tiempo} segundos.")
+        await log_channel.send(f"[{ctx.author} ha muteado a {usuario} por "
+                              f"{razon} durante {tiempo} segundos]")
+
+        await asyncio.sleep(tiempo)
+
+        await usuario.remove_roles(rol_muteado)
+        await ctx.send(f"{usuario.mention} ha sido desmuteado automáticamente.")
+        await log_channel.send(f"[{usuario} ha sido desmuteado tras {tiempo} "
+                               f"segundos]")
+    except Exception as error:
+        await ctx.send("No se pudo aplicar el mute.")
+        await log_channel.send(f"[Error al mutear a {usuario}: {error}]")
+
+@client.command()
 async def create_text_channel(ctx, nombre: str):
     """channel: logs"""
     channel = client.get_channel(1249871058152980530)
