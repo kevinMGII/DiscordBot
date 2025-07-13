@@ -1,4 +1,4 @@
-import discord, datetime, os, asyncio
+import discord, datetime, os, asyncio, aiohttp
 from discord.ext import commands
 from dotenv import load_dotenv
 from chatbot import ask_openrouter
@@ -150,6 +150,65 @@ async def warn(ctx, miembro: discord.Member, *,
         except Exception as e:
             await ctx.send(f"No se pudo banear a {miembro.mention}.")
             await log_channel.send(f"[Error al banear a {miembro}: {e}]")
+
+@client.command()
+async def checklink(ctx, url: str):
+    """Verifica si un enlace es seguro usando VirusTotal"""
+
+    headers = {
+        "x-apikey": os.getenv("VIRUSTOTAL_API_KEY")
+    }
+
+    async with aiohttp.ClientSession() as session:
+        try:
+            async with session.post("https://www.virustotal.com/api/v3/urls",
+                                    headers=headers,
+                                    data={"url": url}) as submit_response:
+                submit_data = await submit_response.json()
+
+                if "data" not in submit_data:
+                    await ctx.send("No se pudo enviar la URL a VirusTotal.")
+                    return
+
+                url_id = submit_data["data"]["id"]
+
+            processing_message = await ctx.send("Analizando enlace...")
+
+            await asyncio.sleep(10)
+
+            async with session.get(f"https://www.virustotal.com/api/v3/"
+                                   f"analyses/{url_id}",
+                                   headers=headers) as result_response:
+                result_data = await result_response.json()
+
+                stats = result_data.get("data", {}).get("attributes", {}).get\
+                    ("stats", {})
+                malicious = stats.get("malicious", 0)
+                suspicious = stats.get("suspicious", 0)
+                harmless = stats.get("harmless", 0)
+
+                message = (
+                    f"🔍 Análisis de `{url}`:\n"
+                    f"- Maliciosos: {malicious}\n"
+                    f"- Sospechosos: {suspicious}\n"
+                    f"- Inofensivos: {harmless}\n"
+                )
+
+                if malicious > 0 or suspicious > 0:
+                    message += "🔴 Este enlace puede ser peligroso."
+                else:
+                    if harmless + malicious + suspicious == 0:
+                        message += "⚠️ No se encontraron datos. Puede ser un " \
+                                   "enlace muy nuevo o no analizado aún."
+                    else:
+                        message += "🟢 El enlace parece seguro."
+
+                await processing_message.edit(content=message)
+
+        except Exception as e:
+            await ctx.send("Hubo un error al verificar el enlace.")
+            log_channel = client.get_channel(1249871058152980530)
+            await log_channel.send(f"[Error en check-link: {e}]")
 
 
 @client.command()
